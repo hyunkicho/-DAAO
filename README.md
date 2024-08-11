@@ -7,6 +7,71 @@
 * New user can deploy their own AAwallet that AI can vote with their comments in twitter
 * If tally didn'y support some chain don't worry. We have verified all of our contract in block scout so If you deploy it it will be automatically verified in blockscout.
 
+# Flow Chart
+``` mermaid
+flowchart TD
+    %% Subgraph for DAAO
+    subgraph DAAO
+        direction TB
+        AAWallet[AA Wallet]
+        AI[AI]
+        AAWallet --> AI
+    end
+    
+    %% Subgraph for Governance
+    subgraph Governance
+        direction TB
+        Governor[Governor]
+        TimeLock[Timelock]
+    end
+    
+    %% Proposal flow
+    Proposal[Proposal] -->|1-1. Vote| AAWallet
+    AI -->|2-1. Check| Proposal
+    Governor -->|submits| Proposal
+    Proposal -->|executes| TimeLock
+    Governor -->|2-2. Pause| TimeLock
+    
+    %% Networks with specific colors
+    subgraph Networks
+        direction LR
+        Optimism["Optimism"]
+        style Optimism fill:#ff6666,stroke:#ff0000,stroke-width:2px
+        
+        Base["Base"]
+        style Base fill:#6666ff,stroke:#0000ff,stroke-width:2px
+        
+        Metall2["Metal l2"]
+        style Metall2 fill:#cc99ff,stroke:#800080,stroke-width:2px
+    end
+    
+    %% Network connections
+    DAAO -.-> Optimism
+    DAAO -.-> Base
+    DAAO -.-> Metall2
+    Governance -.-> Optimism
+    Governance -.-> Base
+    Governance -.-> Metall2
+    
+    %% Tally and Blockscout with distinct colors
+    Tally["Tally"]
+    style Tally fill:#ffff99,stroke:#ffcc00,stroke-width:2px
+    
+    Blockscout["Blockscout"]
+    style Blockscout fill:#99ff99,stroke:#33cc33,stroke-width:2px
+    
+    %% Blockscout connected to both AA Wallet and Governor
+    Blockscout -->|Explore Transactions| AAWallet
+    Blockscout -->|Governance Actions| Governor
+    
+    %% Tally connected to Governor for governance actions
+    Tally -->|Governance Actions| Governor
+    
+    %% Clickable links (optional)
+    click AAWallet "https://blockscout.com" "Interact with AA Wallet on Blockscout"
+    click Governor "https://tally.xyz" "Governance actions on Tally"
+```
+
 # AI Recorder
 
 to execute proposal it should be recorded by recordAI function in Daao.sol
